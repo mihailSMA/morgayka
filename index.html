@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Моргайка — локальный инструмент визуальной стимуляции. Настройка частоты, ограниченная по времени сессия и демонстрация без вспышек.">
+  <meta name="color-scheme" content="light">
+  <title>Моргайка — визуальная стимуляция</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="src/core.js"></script>
+  <script defer src="src/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#settings">К настройкам</a>
+  <div class="app-shell" id="workspace">
+    <header class="masthead">
+      <a class="brand" href="index.html" aria-label="Моргайка, начальный экран">
+        <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="2" width="36" height="36" rx="12" fill="currentColor"/><path d="M10 20h6l4-8v16l4-8h6" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Моргайка<span class="brand-caption" lang="en">Neurology Visual Stimulus</span></span>
+      </a>
+      <span class="local-badge"><span class="dot"></span>Локально · Без передачи данных</span>
+    </header>
+    <main id="settings" tabindex="-1">
+      <div class="intro"><p class="eyebrow">ПАНЕЛЬ УПРАВЛЕНИЯ</p><h1>Визуальная стимуляция</h1><p class="intro-copy">Задайте параметры сессии.<br> Запуск и остановка остаются под вашим контролем.</p></div>
+      <div class="console">
+        <form id="session-form" novalidate>
+          <div class="panel-heading"><h2>Параметры сессии</h2><span class="status" id="status"><span class="dot"></span>Готово к настройке</span></div>
+          <div class="controls">
+            <section class="control-group" aria-labelledby="frequency-title">
+              <div class="control-caption"><h3 id="frequency-title">Частота</h3><span>01</span></div>
+              <div class="value-field"><input id="frequency" name="frequency" type="number" min="1" max="20" step="0.5" value="2" inputmode="decimal" aria-label="Частота в герцах" aria-describedby="frequency-help form-error"><span>Гц</span></div>
+              <input id="frequency-range" type="range" min="1" max="20" step="0.5" value="2" aria-label="Выбор частоты ползунком">
+              <div class="range-labels"><span>1 Гц</span><span>20 Гц</span></div>
+              <p class="field-help" id="frequency-help">Один цикл: красный и чёрный.<br> Время каждого цвета одинаковое.</p>
+            </section>
+            <section class="control-group" aria-labelledby="duration-title">
+              <div class="control-caption"><h3 id="duration-title">Длительность</h3><span>02</span></div>
+              <div class="value-field"><input id="duration" name="duration" type="number" min="5" max="120" step="5" value="15" inputmode="numeric" aria-label="Длительность в секундах" aria-describedby="duration-help form-error"><span>сек</span></div>
+              <input id="duration-range" type="range" min="5" max="120" step="5" value="15" aria-label="Выбор длительности ползунком">
+              <div class="range-labels"><span>5 сек</span><span>120 сек</span></div>
+              <p class="field-help" id="duration-help">Сессия завершится автоматически.<br> После остановки параметры сохранятся.</p>
+            </section>
+          </div>
+          <p id="form-error" class="message error" role="alert" hidden></p>
+          <div class="launch-area">
+            <div class="session-summary"><span class="swatches" aria-hidden="true"><i></i><i></i></span><span>Красный / чёрный<span class="summary-detail" id="summary">2 Гц · 15 сек · Полный экран</span></span></div>
+            <div class="actions"><button class="button secondary" type="button" id="demo-button">Демонстрация без вспышек</button><button class="button primary" type="submit" id="start-button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6Z" fill="currentColor"/></svg>Начать сессию</button></div>
+            <p class="stop-hint"><kbd>Esc</kbd><span>или любой щелчок по экрану — немедленная остановка</span></p>
+          </div>
+        </form>
+        <aside class="session-note"><span class="note-symbol" aria-hidden="true">i</span><p>Для работы под непосредственным контролем специалиста. Частота задана программно; точность отображения зависит от браузера и экрана.</p></aside>
+      </div>
+      <section id="result" class="result" aria-labelledby="result-title" aria-live="polite" hidden>
+        <div class="result-top"><div><p class="eyebrow" id="result-label">ПОСЛЕДНЯЯ СЕССИЯ</p><h2 id="result-title"></h2></div><span class="result-time" id="result-time"></span></div>
+        <p id="result-description"></p>
+        <dl id="timing" class="timing" hidden><div><dt>Медиана интервала</dt><dd id="median"></dd></div><div><dt>Максимальный интервал</dt><dd id="max"></dd></div><div><dt>Интервалы > 1,5× медианы</dt><dd id="late"></dd></div></dl>
+        <p class="measurement-note" id="measurement-note" hidden>Измерены интервалы вызовов requestAnimationFrame. Это не измерение физических вспышек или точной частоты дисплея.</p>
+      </section>
+      <details class="help"><summary>Как пользоваться и что важно знать</summary><div class="help-content"><p>Выберите частоту и длительность. «Начать сессию» включает полноэкранное чередование красного и чёрного. «Демонстрация без вспышек» проходит тот же сценарий с неподвижным нейтральным фоном.</p><p>Esc, щелчок, смена вкладки, потеря фокуса или выход из полного экрана завершают сессию. Продолжение возможно только новым запуском. Служебное уведомление о полном экране может показать сам браузер.</p><p>При загрузке приложения мигания нет. Это программный прототип без подтверждённой медицинской точности и клинической сертификации. Параметры определяет специалист.</p></div></details>
+    </main>
+    <footer><span>Моргайка <span class="footer-version">/ 1.0</span></span><span>HTML · CSS · JavaScript</span></footer>
+  </div>
+  <div id="stimulus" class="stimulus" hidden aria-label="Полноэкранная сессия. Esc или щелчок для остановки."></div>
+  <noscript><p class="noscript">Для работы приложения включите JavaScript. Стимуляция не запущена.</p></noscript>
+</body>
+</html>

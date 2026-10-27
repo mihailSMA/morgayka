@@ -1,0 +1,8 @@
+{
+  "name": "morgayka",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local browser visual stimulus prototype with a non-flashing demonstration mode",
+  "scripts": { "test": "node --test" },
+  "engines": { "node": ">=20" }
+}
